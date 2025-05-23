@@ -27,26 +27,45 @@ scan-job:
   # Upload IRX file to ASoC to be analyzed and receive scanId
   - appscan.sh queue_analysis -a $appID >> output.txt
   - cat output.txt
-  - scanId=$(sed -n '2p' output.txt)
+  - scanIdSCA=$(sed -n '3p' output.txt)
+  - scanIdSAST=$(sed -n '5p' output.txt)
   # Check scanId for scan status to be Ready
   - >
     for x in $(seq 1 1000)
       do
-        resultScan=$(appscan.sh status -i $scanId)
-        echo $resultScan 
-        if [ "$resultScan" == "Ready" ]
+        resultScanSAST=$(appscan.sh status -i $scanIdSAST)
+        resultScanSCA=$(appscan.sh status -i $scanIdSCA)
+        echo "SAST scan status: $resultScanSAST"
+        echo "SCA scan status: $resultScanSCA" 
+        if [ "$resultScanSAST" == "Ready" ] && [ "$resultScanSCA" == "Ready" ]
           then break 
         fi
         sleep 60
       done
   # Get report from ASoC
-  - appscan.sh get_result -i $scanId -t html
-  # Get scan summary and determine if 
-  - appscan.sh info -i $scanId > scanStatus.txt
-  - highIssues=$(cat scanStatus.txt | grep LatestExecution | grep -oP '(?<="NHighIssues":)[^,]*')
-  - mediumIssues=$(cat scanStatus.txt | grep LatestExecution | grep -oP '(?<="NMediumIssues":)[^,]*')
-  - lowIssues=$(cat scanStatus.txt | grep LatestExecution | grep -oP '(?<="NLowIssues":)[^,]*')
-  - totalIssues=$(cat scanStatus.txt | grep LatestExecution | grep -oP '(?<="NIssuesFound":)[^,]*')
+  - appscan.sh get_result -i $scanIdSCA -t html -d ./SCA_Report.html
+  - appscan.sh get_result -i $scanIdSAST -t html -d ./SAST_Report.html
+  # Get scan summary for both SCA and SAST scans 
+  - appscan.sh info -i $scanIdSCA > scanStatusSCA.txt
+  - appscan.sh info -i $scanIdSAST > scanStatusSAST.txt
+  # Extract issue counts for SCA
+  - highIssuesSCA=$(cat scanStatusSCA.txt | grep LatestExecution | grep -oP '(?<="NHighIssues":)[^,]*')
+  - mediumIssuesSCA=$(cat scanStatusSCA.txt | grep LatestExecution | grep -oP '(?<="NMediumIssues":)[^,]*')
+  - lowIssuesSCA=$(cat scanStatusSCA.txt | grep LatestExecution | grep -oP '(?<="NLowIssues":)[^,]*')
+  - totalIssuesSCA=$(cat scanStatusSCA.txt | grep LatestExecution | grep -oP '(?<="NIssuesFound":)[^,]*')
+
+  # Extract issue counts for SAST
+  - highIssuesSAST=$(cat scanStatusSAST.txt | grep LatestExecution | grep -oP '(?<="NHighIssues":)[^,]*')
+  - mediumIssuesSAST=$(cat scanStatusSAST.txt | grep LatestExecution | grep -oP '(?<="NMediumIssues":)[^,]*')
+  - lowIssuesSAST=$(cat scanStatusSAST.txt | grep LatestExecution | grep -oP '(?<="NLowIssues":)[^,]*')
+  - totalIssuesSAST=$(cat scanStatusSAST.txt | grep LatestExecution | grep -oP '(?<="NIssuesFound":)[^,]*')
+
+  # Combine issues from both SAST and SCA scans
+  - highIssues=$(($highIssuesSCA + $highIssuesSAST))
+  - mediumIssues=$(($mediumIssuesSCA + $mediumIssuesSAST))
+  - lowIssues=$(($lowIssuesSCA + $lowIssuesSAST))
+  - totalIssues=$(($totalIssuesSCA + $totalIssuesSAST))
+  - echo "Total issues -> $totalIssues"
   - >
     if [ "$highIssues" -gt "$maxIssuesAllowed" ] && [ "$sevSecGw" == "highIssues" ]
       then
@@ -80,4 +99,5 @@ scan-job:
   artifacts:
     when: always
     paths:
-      - "*.html"
+      - "SCA_Report.html"
+      - "SAST_Report.html"
