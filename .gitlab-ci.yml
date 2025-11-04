@@ -1,0 +1,134 @@
+image: "saclient:latest"
+
+# The options to sevSecGw are highIssues, mediumIssues, lowIssues and totalIssues
+# maxIssuesAllowed is the amount of issues in selected sevSecGw
+
+variables:
+  sevSecGw: totalIssues
+  maxIssuesAllowed: 200
+
+stages:
+  - scan-sast
+  
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: always
+
+scan-job:
+  stage: scan-sast
+  tags:
+    - docker
+  script:
+  # Set env variables
+  - export appKey="$APPSCAN_KEY"
+  - export appSecret="$APPSCAN_SECRET"
+  - export appID="$APP_ID"
+  # Generate IRX files based on source root folder downloaded by Gitlab
+  - appscan.sh prepare
+  # Authenticate in ASoC
+  - appscan.sh api_login -u "$appKey" -P "$appSecret"
+  # Upload IRX file to ASoC to be analyzed and receive scanId
+  - appscan.sh queue_analysis -a "$appID" >> output.txt
+  # Grab SAST and SCA scanIDs
+  - |
+    scanIdSAST=$(awk '/SAST scan ID:/{getline; print}' output.txt)
+    scanIdSCA=$(awk '/SCA scan ID:/{getline; print}' output.txt)
+    # Check scanId for scan status to be Ready
+      for x in $(seq 1 120)
+        do
+          if [ -z "$scanIdSAST" ]; then
+            resultScanSAST="Ready"
+          else
+            resultScanSAST=$(appscan.sh status -i "$scanIdSAST")
+          fi
+
+          if [ -z "$scanIdSCA" ]; then
+            resultScanSCA="Ready"
+          else
+            resultScanSCA=$(appscan.sh status -i "$scanIdSCA")
+          fi
+
+          echo "SAST scan status: $resultScanSAST"
+          echo "SCA scan status: $resultScanSCA"
+
+          if [ "$resultScanSAST" == "Ready" ] && [ "$resultScanSCA" == "Ready" ]; then
+            echo "Both scans are Ready (or IDs missing)."
+            break
+          fi
+
+          sleep 60
+        done
+
+  # If both SAST and SCA scan IDs are null, fail
+  -|
+    if [ -z "$scanIdSAST" ] && [ -z "$scanIdSCA" ]; then
+      echo "FAILED: Could not retrieve SAST or SCA scan statuses"
+        exit 1
+
+  # Get scan summary for both SCA and SAST scans 
+  # Get SAST report from AppScan
+  - |
+    if [ -n "$scanIdSAST" ]; then
+      appscan.sh get_result -i $scanIdSAST -t html -d ./SAST_Report.html
+      appscan.sh info -i $scanIdSAST > scanStatusSAST.txt
+      # Extract issue counts for SAST
+      highIssuesSAST=$(cat scanStatusSAST.txt | grep LatestExecution | sed -E 's/.*"NHighIssues":([0-9]+).*/\1/')
+      mediumIssuesSAST=$(cat scanStatusSAST.txt | grep LatestExecution | sed -E 's/.*"NMediumIssues":([0-9]+).*/\1/')
+      lowIssuesSAST=$(cat scanStatusSAST.txt | grep LatestExecution | sed -E 's/.*"NLowIssues":([0-9]+).*/\1/')
+      totalIssuesSAST=$(cat scanStatusSAST.txt | grep LatestExecution | sed -E 's/.*"NIssuesFound":([0-9]+).*/\1/')
+    fi
+
+  # Get SCA report from AppScan
+  - |
+    if [ -n "$scanIdSCA" ]; then
+      appscan.sh get_result -i $scanIdSCA -t html -d ./SCA_Report.html
+      appscan.sh info -i $scanIdSCA > scanStatusSCA.txt
+      # Extract issue counts for SCA
+      highIssuesSCA=$(cat scanStatusSCA.txt | grep LatestExecution | sed -E 's/.*"NHighIssues":([0-9]+).*/\1/')
+      mediumIssuesSCA=$(cat scanStatusSCA.txt | grep LatestExecution | sed -E 's/.*"NMediumIssues":([0-9]+).*/\1/')
+      lowIssuesSCA=$(cat scanStatusSCA.txt | grep LatestExecution | sed -E 's/.*"NLowIssues":([0-9]+).*/\1/')
+      totalIssuesSCA=$(cat scanStatusSCA.txt | grep LatestExecution | sed -E 's/.*"NIssuesFound":([0-9]+).*/\1/')
+    fi
+
+  # Combine issues from both SAST and SCA scans
+  - highIssues=$(($highIssuesSCA + $highIssuesSAST))
+  - mediumIssues=$(($mediumIssuesSCA + $mediumIssuesSAST))
+  - lowIssues=$(($lowIssuesSCA + $lowIssuesSAST))
+  - totalIssues=$(($totalIssuesSCA + $totalIssuesSAST))
+  - echo "Total issues -> $totalIssues"
+  - >
+    if [ "$highIssues" -gt "$maxIssuesAllowed" ] && [ "$sevSecGw" == "highIssues" ]
+      then
+        echo "There are $highIssues high issues, $mediumIssues medium issues and $lowIssues low issues"
+        echo "The company policy permits less than $maxIssuesAllowed $sevSecGw severity"
+        echo "Failed"
+        exit 1
+    elif [ "$mediumIssues" -gt "$maxIssuesAllowed" ] && [ "$sevSecGw" == "mediumIssues" ]
+      then
+        echo "There are $highIssues high issues, $mediumIssues medium issues and $lowIssues low issues"
+        echo "The company policy permits less than $maxIssuesAllowed $sevSecGw severity"
+        echo "Failed"
+        exit 1
+    elif [ "$lowIssues" -gt "$maxIssuesAllowed" ] && [ "$sevSecGw" == "lowIssues" ]
+      then
+        echo "There are $highIssues high issues, $mediumIssues medium issues and $lowIssues low issues"
+        echo "The company policy permits less than $maxIssuesAllowed $sevSecGw severity"
+        echo "Failed"
+        exit 1
+    elif [ "$totalIssues" -gt "$maxIssuesAllowed" ] && [ "$sevSecGw" == "totalIssues" ]
+      then
+        echo "There are $highIssues high issues, $mediumIssues medium issues and $lowIssues low issues"
+        echo "The company policy permits less than $maxIssuesAllowed $sevSecGw severity"
+        echo "Failed"
+        exit 1
+    fi
+  - echo "There are $highIssues high issues, $mediumIssues medium issues and $lowIssues low issues"
+  - echo "The company policy permits less than $maxIssuesAllowed $sevSecGw severity"
+  - echo "Passed"
+  
+  artifacts:
+    when: always
+    paths:
+      - "SCA_Report.html"
+      - "SAST_Report.html"

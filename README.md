@@ -1,21 +1,21 @@
 # HCL AppScan and GitLab
 Your code is better and more secure with HCL AppScan.
 
-You can use HCL AppScan with GitLab to run static analysis security testing (SAST) against the files in your repository on every merge request, thus preventing vulnerabilities from reaching the main branch. Results are stored in AppScan on Cloud.
+You can use HCL AppScan with GitLab to run static analysis security testing (SAST) against the files in your repository on every merge request, thus preventing vulnerabilities from reaching the main branch. Results are stored in HCL AppScan.
 
 # Usage
 ## Register
-If you don't have an account, register on [HCL AppScan on Cloud (ASoC)](https://www.hcltechsw.com/appscan/codesweep-for-github) to generate your API key and API secret.
+If you don't have an account, register on [HCL AppScan](https://www.hcltechsw.com/appscan/codesweep-for-github) to generate your API key and API secret.
 
 ## Setup
 1. Generate your API key and API secret on [the API page](https://cloud.appscan.com/main/settings).
-   - The API key and API secret map to the `ASOC_KEY` and `ASOC_SECRET` parameters for this action. Make note of the key and secret.
+   - The API key and API secret map to the `APPSCAN_KEY` and `APPSCAN_SECRET` parameters for this action. Make note of the key and secret.
    
-2. Create the [application](https://help.hcltechsw.com/appscan/ASoC/ent_create_application.html) in ASoC. 
+2. Create the [application](https://help.hcltechsw.com/appscan/ASoC/ent_create_application.html) in AppScan. 
    - Applications act as a container to store all scans that are related to the same project.
    
 3. Copy the application ID. Select **Application >** **&lt;your application&gt;** and then click **Copy** next to **Application ID** under **Application details**.
-   - The application ID in ASoC maps to `APP_ID` for this integration.
+   - The application ID in AppScan maps to `APP_ID` for this integration.
    
    ![APP_ID](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/img/appid.png)
 
@@ -24,8 +24,8 @@ If you don't have an account, register on [HCL AppScan on Cloud (ASoC)](https://
    ### Required Inputs
    | Name |   Description    |
    |    :---:    |    :---:    |
-   | ASOC_KEY | Your API key from [the API page](https://cloud.appscan.com/main/settings) |
-   | ASOC_SECRET | Your API secret from [the API page](https://cloud.appscan.com/main/settings) |
+   | APPSCAN_KEY | Your API key from [the API page](https://cloud.appscan.com/main/settings) |
+   | APPSCAN_SECRET | Your API secret from [the API page](https://cloud.appscan.com/main/settings) |
    | APP_ID | The ID of the application in ASoC |
    
    ![variables](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/img/variables.png)
