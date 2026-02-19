@@ -1,0 +1,22 @@
+variables:
+  appscanApiKeyId: $APPSCAN_KEY
+  appscanApiKeySecret: $APPSCAN_SECRET
+  appscanAppName: $APP_ID
+  serviceUrl: 'cloud.appscan.com'
+  assetGroupId: 'xxxxxxxxxxxxxx'
+  scanName: $APP_ID-$CI_JOB_ID
+  urlTarget: 'https://demo.testfire.net?mode=demo'
+  loginDastConfig: 'login.dast.config'
+  manualExplorerDastConfig: 'manualexplorer.dast.config'
+  appscanPresenceId: ''
+  sevSecGw: 'criticalIssues'
+  maxIssuesAllowed: 100
+
+include:
+  - remote: 'https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/yaml/appscanasoc_scan_dast.yaml'
+
+stages:
+- scan-dast
+
+scan-job:
+  stage: scan-dast
