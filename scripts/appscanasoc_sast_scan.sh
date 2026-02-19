@@ -8,12 +8,12 @@ echo "Sast" > scanTech.txt
 
 # Downloading and preparing SAClientUtil
 if ! [ -x "$(command -v appscan.sh)" ]; then
-  echo 'appscan.sh is not installed.' >&2
-  curl -k -s "https://$serviceUrl/api/v4/Tools/SAClientUtil?os=linux" > $HOME/SAClientUtil.zip
-  unzip $HOME/SAClientUtil.zip -d $HOME > /dev/null
-  rm -f $HOME/SAClientUtil.zip
-  mv $HOME/SAClientUtil.* $HOME/SAClientUtil
-  export PATH="$HOME/SAClientUtil/bin:${PATH}"
+    echo 'appscan.sh is not installed.' >&2
+    curl -k -s "https://$serviceUrl/api/v4/Tools/SAClientUtil?os=linux" > $HOME/SAClientUtil.zip
+    unzip $HOME/SAClientUtil.zip -d $HOME > /dev/null
+    rm -f $HOME/SAClientUtil.zip
+    mv $HOME/SAClientUtil.* $HOME/SAClientUtil
+    export PATH="$HOME/SAClientUtil/bin:${PATH}"
 fi
 
 appscan.sh version
@@ -21,11 +21,11 @@ appscan.sh update -acceptssl
 
 # Generate IRX files based on source root folder downloaded by Gitlab
 if [ "$scoScan" = 'yes' ]; then
-  echo "AppScan Prepare using SCO parameter. Command: appscan.sh prepare -es -sco -nc -acceptssl";
-  appscan.sh prepare -es -sco -nc -acceptssl
+    echo "AppScan Prepare using SCO parameter. Command: appscan.sh prepare -es -sco -nc -acceptssl";
+    appscan.sh prepare -es -sco -nc -acceptssl
 else
-  echo "AppScan Prepare. Command: appscan.sh prepare -es -nc -acceptssl";
-  appscan.sh prepare -es -nc -acceptssl
+    echo "AppScan Prepare. Command: appscan.sh prepare -es -nc -acceptssl";
+    appscan.sh prepare -es -nc -acceptssl
 fi
 
 # Authenticate in ASOC

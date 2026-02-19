@@ -5,7 +5,7 @@ variables:
   appscanApiKeySecret: $APPSCAN_SECRET
   appscanAppName: $APP_ID
   serviceUrl: 'cloud.appscan.com'
-  assetGroupId: 'xxxxxxxxxxxxx'
+  assetGroupId: $APPSCAN_ASSET
   scanName: $CI_PROJECT_NAME-$CI_JOB_ID
   urlTarget: 'xxxxxxxxxxxxx'
   loginDastConfig: 'login.dast.config'

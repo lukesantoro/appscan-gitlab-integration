@@ -2,7 +2,7 @@ variables:
   appscanApiKeyId: $APPSCAN_KEY
   appscanApiKeySecret: $APPSCAN_SECRET
   appscanAppName: $APP_ID
-  asocAssetGroupId: xxxxxxxxxxxxxxxxxxx
+  assetGroupId: $APPSCAN_ASSET
 
 stages:
 - scan-sca
