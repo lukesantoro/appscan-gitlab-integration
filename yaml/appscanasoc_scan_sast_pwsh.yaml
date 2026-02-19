@@ -1,9 +1,9 @@
 # Requirement: Gitlab-runner running in a Windows Server, SAClientUtil deployed and folder bin in Windows System PATH
 
 variables:
-  asocApiKeyId: xxxxxxxxxxxxx
-  asocApiKeySecret: xxxxxxxxxxxxx
-  appId: xxxxxxxxxxxxx
+  appscanApiKeyId: $APPSCAN_KEY
+  appscanApiKeySecret: $APPSCAN_SECRET
+  appscanAppName: $APP_ID
   sevSecGw: totalIssues
   maxIssuesAllowed: 2000
 

@@ -4,9 +4,9 @@ image: debian:latest
 # maxIssuesAllowed is the amount of issues in selected sevSecGw
 # appId is application id located in ASoC 
 variables:
-  asocApiKeyId: xxxxxxxxxxxxxxxxxxx
-  asocApiKeySecret: xxxxxxxxxxxxxxxxxxx
-  appId: xxxxxxxxxxxxxxxxxxx
+  appscanApiKeyId: $APPSCAN_KEY
+  appscanApiKeySecret: $APPSCAN_SECRET
+  appscanAppName: $APP_ID
   sevSecGw: totalIssues
   maxIssuesAllowed: 200
 

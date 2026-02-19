@@ -4,9 +4,9 @@
 # appscanPresenceId is AppScan Presence ID that will be used to reach out URL. Keep 00000000-0000-0000-0000-000000000000 if there is no AppScanPresence.
 # If there is login.dast.config and manualexplorer.dast.config in repository it will be uploaded and used in Scan otherwise will be ignored.
 variables:
-  asocApiKeyId: xxxxxxxxxxxxxxxx
-  asocApiKeySecret: xxxxxxxxxxxxxxxx
-  appId: xxxxxxxxxxxxxxxx
+  appscanApiKeyId: $APPSCAN_KEY
+  appscanApiKeySecret: $APPSCAN_SECRET
+  appscanAppName: $APP_ID
   appscanPresenceId: 00000000-0000-0000-0000-000000000000
   urlTarget: https://demo.testfire.net
   loginDastConfig: login.dast.config

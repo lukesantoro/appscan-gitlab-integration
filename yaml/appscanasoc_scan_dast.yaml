@@ -1,9 +1,9 @@
 image: debian:latest
 
 variables:
-  asocApiKeyId: 'xxxxxxxxxxxxx'
-  asocApiKeySecret: 'xxxxxxxxxxxxx'
-  asocAppName: $CI_PROJECT_NAME
+  appscanApiKeyId: $APPSCAN_KEY
+  appscanApiKeySecret: $APPSCAN_SECRET
+  appscanAppName: $APP_ID
   serviceUrl: 'cloud.appscan.com'
   assetGroupId: 'xxxxxxxxxxxxx'
   scanName: $CI_PROJECT_NAME-$CI_JOB_ID

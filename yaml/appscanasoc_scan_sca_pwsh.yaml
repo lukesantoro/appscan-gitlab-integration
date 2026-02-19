@@ -1,7 +1,7 @@
 variables:
-  asocApiKeyId: xxxxxxxxxxxxxxxxxxx
-  asocApiKeySecret: xxxxxxxxxxxxxxxxxxx
-  asocAppName: $CI_PROJECT_NAME
+  appscanApiKeyId: $APPSCAN_KEY
+  appscanApiKeySecret: $APPSCAN_SECRET
+  appscanAppName: $APP_ID
   asocAssetGroupId: xxxxxxxxxxxxxxxxxxx
 
 stages:
