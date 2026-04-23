@@ -3,12 +3,12 @@
 #serviceUrl='xxxxxxxxxxxxx'
 #asocAppName='xxxxxxxxxxxxx'
 
-asocToken=$(curl -k -s -X POST --header 'Content-Type:application/json' --header 'Accept:application/json' -d '{"KeyId":"'"$asocApiKeyId"'","KeySecret":"'"$asocApiKeySecret"'"}' "https://$serviceUrl/api/v4/Account/ApiKeyLogin" | grep -oP '(?<="Token":\ ")[^"]*')
-if [ -z "$asocToken" ]; then
+appscanToken=$(curl -k -s -X POST --header 'Content-Type:application/json' --header 'Accept:application/json' -d '{"KeyId":"'"$appscanApiKeyId"'","KeySecret":"'"$appscanApiKeySecret"'"}' "https://$serviceUrl/api/v4/Account/ApiKeyLogin" | grep -oP '(?<="Token":\ ")[^"]*')
+if [ -z "$appscanToken" ]; then
 	echo "The token variable is empty. Check the authentication process.";
     exit 1
 fi
-appData=$(curl -s -k -X GET --header 'Authorization: Bearer '"$asocToken"'' --header 'Accept:application/json' "https://$serviceUrl/api/v4/Apps?%24filter=Name%20eq%20%27$asocAppName%27")
+appData=$(curl -s -k -X GET --header 'Authorization: Bearer '"$appscanToken"'' --header 'Accept:application/json' "https://$serviceUrl/api/v4/Apps?%24filter=Name%20eq%20%27$asocAppName%27")
 echo "--------------Compliance Policies---------------" 
 appCompliances=$(echo $appData | jq -r '.Items[0].ComplianceStatuses[] | "Enabled: \(.Enabled) | Compliant: \(.Compliant) | Name: \(.Name)"')
 echo "$appCompliances"
@@ -21,7 +21,7 @@ for ((i=0; i<$compliance_count; i++)); do
     appId=$(echo "$appData" | jq -r ".Items[0].Id")
 
     if [[ "$enabled" == "true" && "$compliant" == "false" ]]; then
-        issuesNoCompliance=$(curl -s -k -X GET --header 'Authorization: Bearer '"$asocToken"'' --header 'Accept:application/json' "https://$serviceUrl/api/v4/Issues/Application/$appId?selectPolicyIds=$complianceId&applyPolicies=Select&select=Severity,IssueType,Location,Id")
+        issuesNoCompliance=$(curl -s -k -X GET --header 'Authorization: Bearer '"$appscanToken"'' --header 'Accept:application/json' "https://$serviceUrl/api/v4/Issues/Application/$appId?selectPolicyIds=$complianceId&applyPolicies=Select&select=Severity,IssueType,Location,Id")
         issue_count=$(echo "$issuesNoCompliance" | jq '.Items | length')
         echo "----------------New Issues Found-----------------" 
         echo "This scan found $issue_count new issues." 
@@ -42,4 +42,4 @@ for ((i=0; i<$compliance_count; i++)); do
     fi
 done
 echo "The application is compliance with Enterprise policies."
-curl -k -s -X 'GET' "https://$serviceUrl/api/v4/Account/Logout" -H 'accept: */*' -H "Authorization: Bearer $asocToken"
+curl -k -s -X 'GET' "https://$serviceUrl/api/v4/Account/Logout" -H 'accept: */*' -H "Authorization: Bearer $appscanToken"
