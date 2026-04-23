@@ -22,7 +22,13 @@ if [ -z "$assetGroupIdExist" ]; then
     exit 1
 fi
 
-appId=$(curl -s -k -X GET --header 'Authorization: Bearer '"$asocToken"'' --header 'Accept:application/json' "https://$serviceUrl/api/v4/Apps?%24top=5000&%24filter=Name%20eq%20%27$appscanAppName%27&%24select=name%2Cid&%24count=false" | grep -oP '(?<="Id":\ ")[^"]*')
+replace_spaces() {
+    echo "$1" | sed 's/ /%20/g'
+}
+
+encodedAppName=$(replace_spaces "$appscanAppName")
+
+appId=$(curl -s -k -X GET --header 'Authorization: Bearer '"$asocToken"'' --header 'Accept:application/json' "https://$serviceUrl/api/v4/Apps?%24top=5000&%24filter=Name%20eq%20%27$encodedAppName%27&%24select=name%2Cid&%24count=false" | grep -oP '(?<="Id":\ ")[^"]*')
 if [ -z "$appId" ]; then
 	appId=$(curl -s -k -X POST --header "Authorization: Bearer $asocToken" --header 'Accept:application/json' --header 'Content-Type: application/json' -d '{"Name":"'"$appscanAppName"'","AssetGroupId":"'"$assetGroupId"'","UseOnlyAppPresences":false}' "https://$serviceUrl/api/v4/Apps" | grep -oP '(?<="Id": ")[^"]*' | head -n 1);
 	echo "There is no $appscanAppName application. It was created. The appId is $appId";
