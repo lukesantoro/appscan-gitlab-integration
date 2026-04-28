@@ -1,7 +1,4 @@
-#asocApiKeyId='xxxxxxxxxxxxx'
-#asocApiKeySecret='xxxxxxxxxxxxx'
-#serviceUrl='cloud.appscan.com'
-#scanName=$CI_PROJECT_NAME-$CI_JOB_ID
+#!/bin/bash
 
 appId=$(cat appId.txt)
 echo "Sca" > scanTech.txt

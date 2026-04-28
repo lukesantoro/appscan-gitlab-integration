@@ -1,13 +1,6 @@
-#/bin/bash
-
-#asocApiKeyId='xxxxxxxxxxxxx'
-#asocApiKeySecret='xxxxxxxxxxxxx'
-#serviceUrl='xxxxxxxxxxxxx'
-#sevSecGw='xxxxxxxxxxxxx'
-#maxIssuesAllowed=xxxxxxxxxxxxx
+#!/bin/bash
 
 scanId=$(cat scanId.txt)
-
 appscanToken=$(curl -k -s -X POST --header 'Content-Type:application/json' --header 'Accept:application/json' -d '{"KeyId":"'"$appscanApiKeyId"'","KeySecret":"'"$appscanApiKeySecret"'"}' "https://$serviceUrl/api/v4/Account/ApiKeyLogin" | grep -oP '(?<="Token":\ ")[^"]*')
 
 if [ -z "$appscanToken" ]; then

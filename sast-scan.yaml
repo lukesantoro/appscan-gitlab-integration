@@ -1,7 +1,7 @@
 variables:
   appscanApiKeyId: $APPSCAN_KEY
   appscanApiKeySecret: $APPSCAN_SECRET
-  appscanAppName: $APP_ID
+  appscanAppName: $APP_NAME
   serviceUrl: 'cloud.appscan.com'
   assetGroupId: $APPSCAN_ASSET
   scanName: $APP_ID-$CI_JOB_ID

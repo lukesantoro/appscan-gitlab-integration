@@ -1,12 +1,4 @@
-#appscanApiKeyId='xxxxxxxxxxxxxxx'
-#appscanApiKeySecret='xxxxxxxxxxxxxxx'
-#appscanAppName='xxxxxxxxxxxxxxx'
-#serviceUrl='xxxxxxxxxxxxxxx'
-#assetGroupId='xxxxxxxxxxxxxxx'
-
-echo "AppScan Key is $appscanApiKeyId"
-echo "AppScan Secret is $appscanApiKeySecret"
-echo "AppScan App Name is $appscanAppName"
+#!/bin/bash
 
 appscanToken=$(curl -k -s -X POST --header 'Content-Type:application/json' --header 'Accept:application/json' -d '{"KeyId":"'"$appscanApiKeyId"'","KeySecret":"'"$appscanApiKeySecret"'"}' "https://$serviceUrl/api/v4/Account/ApiKeyLogin" | grep -oP '(?<="Token":\ ")[^"]*')
 echo "AppScan Token is $appscanToken"
