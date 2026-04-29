@@ -4,7 +4,7 @@ variables:
   appscanAppName: $APP_NAME
   serviceUrl: 'cloud.appscan.com'
   assetGroupId: $APPSCAN_ASSET
-  scanName: $APP_ID-$CI_JOB_ID
+  scanName: $CI_PROJECT_NAME-$CI_JOB_ID
   scanLatestCommitFiles: 'no' # yes or no. Scan only the latest committed files. Partial scan.
   scoScan: 'no' # yes or no. Source Code Only scan. This option will not scan binaries.
   sevSecGw: 'criticalIssues'

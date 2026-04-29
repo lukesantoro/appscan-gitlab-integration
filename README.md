@@ -37,9 +37,9 @@ If you don't have an account, register on [HCL AppScan on Cloud (ASoC)](https://
   | APP_NAME | The name of the application in AppScan |
   | APPSCAN_ASSET | The ID of the asset group in AppScan |
 
-  ![variables](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/img/ci_cd_variables.png)
+  ![variables](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/ci_cd_variables.png)
 
-5. Copy [.gitlab-ci.yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/.gitlab-ci.yaml) and [Dockerfile](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/Dockerfile) into your GitLab repository root.
+5. Copy [.gitlab-ci.yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/.gitlab-ci.yaml) and [Dockerfile](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/Dockerfile) into your GitLab repository root.
 
 6. Build your own runner. Select **Settings > CI/CD >** Runners and follow the steps under **Specific Runners**.
 
@@ -56,13 +56,13 @@ If you don't have an account, register on [HCL AppScan on Cloud (ASoC)](https://
 10. Verify a new scan job is initiated when new merge requests are created at **Settings > CI/CD > Pipelines**.
 
   Scan Job
-  ![image](https://user-images.githubusercontent.com/69405400/144601178-9bc8c675-a2dd-44c4-a312-908800be1472.png)
+  ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/scan_job.png)
 
   Artifact downloadable
-  ![image](https://user-images.githubusercontent.com/69405400/144601700-40bfa642-a776-4e4f-ba05-e96f4324ef19.png)
+  ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/download_artifacts.png)
 
   Scan passed based on maxIssuesAllowed
-  ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/img/scan_passed.png)
+  ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/scan_passed.png)
 
 ## Additional Information
-The current [yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/.gitlab-ci.yaml) script contains a sample of a security policy check that fails the scan if the number of allowed security issues exceeds a certain threshold. The sample has `maxIssuesAllowed` set to `200`.
+The current [yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/.gitlab-ci.yaml) script contains a sample of a security policy check that fails the scan if the number of allowed security issues exceeds a certain threshold. The sample has `maxIssuesAllowed` set to `200`.
