@@ -1,97 +1,68 @@
-# Integration: AppScan and Gitlab
-Yaml file and Dockerfile giving ideas in how to integrate ASoC and Gitlab
+# HCL AppScan and GitLab
+Your code is better and more secure with HCL AppScan.
 
-Scan Job
-![image](https://user-images.githubusercontent.com/69405400/144601178-9bc8c675-a2dd-44c4-a312-908800be1472.png)
+You can use HCL AppScan with GitLab to run static analysis security testing (SAST) against the files in your repository on every merge request, thus preventing vulnerabilities from reaching the main branch. Results are stored in AppScan.
 
-Artifact downloadable
-![image](https://user-images.githubusercontent.com/69405400/144601700-40bfa642-a776-4e4f-ba05-e96f4324ef19.png)
+# Usage
+## Register
+If you don't have an account, register on [HCL AppScan on Cloud (ASoC)](https://www.hcltechsw.com/appscan/codesweep-for-github) to generate your API key and API secret.
 
-Security Gate response failing or succeeding build
-![image](https://user-images.githubusercontent.com/69405400/144601954-ae41e5ea-a9fa-464b-b931-36cd0887723b.png)
-![image](https://user-images.githubusercontent.com/69405400/144602140-3e4320f3-a86c-44a1-93ed-5ad7f5fa3348.png)
+## Setup
+1. Generate your API key and API secret on [the API page](https://cloud.appscan.com/main/settings).
+  - The API key and API secret map to the `APPSCAN_KEY` and `APPSCAN_SECRET` parameters for this action. Make note of the key and secret.
 
+2. Create the [application](https://help.hcltechsw.com/appscan/ASoC/ent_create_application.html) in AppScan. 
+  - Applications act as a container to store all scans that are related to the same project.
 
-<b><h1>SAST:</b></h1><br>
-Based in 3 components:<br>
-1 - a Dockerfile to generate a image container to download AppScan CLI tool and some tools to be used by Gitlab image Pipeline<br>
-2 - YAML project file with a scan job to be used in a YAML project file<br>
-3 - some variable that could be on YAML project file or be add directly on Gitlab Project (Settings > CI/CD and expand the Variables)<br>
+3. Copy the application name.
+  - The application name in ASoC maps to `APP_NAME` for this integration.
 
-Dockerfile to generate a docker image with SAClient:</br> 
-docker build -t saclient .
-````dockerfile
-FROM ubuntu:latest
-ENV HOME="/root/"
-ENV PATH="$HOME/SAClientUtil/bin:${PATH}"
-RUN apt update
-RUN apt install -y curl unzip maven openjdk-11-jre gradle && apt clean
-RUN curl https://cloud.appscan.com/api/v4/Tools/SAClientUtilByType?toolType=linux > $HOME/SAClientUtil.zip
-RUN unzip $HOME/SAClientUtil.zip -d $HOME
-RUN rm -f $HOME/SAClientUtil.zip
-RUN mv $HOME/SAClientUtil.* $HOME/SAClientUtil
-````
+  ![APP_ID](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/img/app_name.png)
 
-Gitlab YAML file to run SAST analyzes:
-````yaml
-image: saclient
+4. Create variables in GitLab. Select **Settings > CI/CD > Variables**, and set the variables as follows:
 
-# The options to sevSecGw are highIssues, mediumIssues, lowIssues and totalIssues
-# maxIssuesAllowed is the amount of issues in selected sevSecGw
-# appId is application id located in ASoC 
-variables:
-  asocApiKeyId: 'xxxxxxxxxxxxxx'
-  asocApiKeySecret: 'xxxxxxxxxxxxxx'
-  asocAppName: $CI_PROJECT_NAME
-  serviceUrl: 'cloud.appscan.com'
-  assetGroupId: 'xxxxxxxxxxxxxx'
-  scanName: $CI_PROJECT_NAME-$CI_JOB_ID
-  scanLatestCommitFiles: 'no' # yes or no. Scan only the latest committed files. Partial scan.
-  sevSecGw: 'criticalIssues'
-  maxIssuesAllowed: 100
+  ### SAST Required Inputs
+  | Name |   Description    |
+  |    :---:    |    :---:    |
+  | APPSCAN_KEY | Your API key from [the API page](https://cloud.appscan.com/main/settings) |
+  | APPSCAN_SECRET | Your API secret from [the API page](https://cloud.appscan.com/main/settings) |
+  | APP_NAME | The name of the application in AppScan |
+  | APPSCAN_ASSET | The ID of the asset group in AppScan |
 
-include:
-  - remote: 'https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/yaml/appscanasoc_scan_sast.yaml'
+  ### DAST Required Inputs
+  | Name |   Description    |
+  |    :---:    |    :---:    |
+  | APPSCAN_KEY | Your API key from [the API page](https://cloud.appscan.com/main/settings) |
+  | APPSCAN_SECRET | Your API secret from [the API page](https://cloud.appscan.com/main/settings) |
+  | APP_NAME | The name of the application in AppScan |
+  | APPSCAN_ASSET | The ID of the asset group in AppScan |
 
-stages:
-- scan-sast
+  ![variables](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/img/ci_cd_variables.png)
 
-scan-job:
-  stage: scan-sast
-````
+5. Copy [.gitlab-ci.yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/.gitlab-ci.yaml) and [Dockerfile](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/Dockerfile) into your GitLab repository root.
 
-<b><h1>DAST:</b></h1><br>
-Based in 2 components:<br>
-1 - YAML project file with a scan job to be used in a YAML project file.<br>
-2 - some variable that could be on YAML project file or be add directly on Gitlab Project (Settings > CI/CD and expand the Variables)<br>
+6. Build your own runner. Select **Settings > CI/CD >** Runners and follow the steps under **Specific Runners**.
 
-Gitlab YAML file to run DAST analyzes:
-````yaml
-# The options to sevSecGw are highIssues, mediumIssues, lowIssues and totalIssues.
-# maxIssuesAllowed is the amount of issues in selected sevSecGw.
-# appId is application id located in AppScan.
-# appscanPresenceId is AppScan Presence ID that will be used to reach out URL.
-# If there is login.dast.config and manualexplorer.dast.config in repository it will be uploaded and used in Scan otherwise will be ignored.
-variables:
-  asocApiKeyId: 'xxxxxxxxxxxxxxxx'
-  asocApiKeySecret: 'xxxxxxxxxxxxxxxx'
-  asocAppName: $CI_PROJECT_NAME
-  serviceUrl: 'cloud.appscan.com'
-  assetGroupId: 'xxxxxxxxxxxxxxxx'
-  scanName: $CI_PROJECT_NAME-$CI_JOB_ID
-  urlTarget: 'https://demo.testfire.net?mode=demo'
-  loginDastConfig: 'login.dast.config'
-  manualExplorerDastConfig: 'manualexplorer.dast.config'
-  appscanPresenceId: ''
-  sevSecGw: 'criticalIssues'
-  maxIssuesAllowed: 100
+7. On the system on which you are setting up the GitLab runner, log in and clone your GitLab repository if one does not already exist. Ensure that a Docker engine is installed on that machine.
 
-include:
-  - remote: 'https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/yaml/appscanasoc_scan_dast.yaml'
+8. Build a new Docker image called **saclient** from the Dockerfile. Change directory to the root of the repository and run the following command to build the Docker image:
 
-stages:
-- scan-dast
+  `docker build -t saclient .`
 
-scan-job:
-  stage: scan-dast
-````
+   **Important:** The period at the end indicates the current directory.
+
+9. In GitLab, to prevent merges if the scan fails, enable **Pipelines must succeed** at **Settings > Merge requests > Merge checks**.
+
+10. Verify a new scan job is initiated when new merge requests are created at **Settings > CI/CD > Pipelines**.
+
+  Scan Job
+  ![image](https://user-images.githubusercontent.com/69405400/144601178-9bc8c675-a2dd-44c4-a312-908800be1472.png)
+
+  Artifact downloadable
+  ![image](https://user-images.githubusercontent.com/69405400/144601700-40bfa642-a776-4e4f-ba05-e96f4324ef19.png)
+
+  Scan passed based on maxIssuesAllowed
+  ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/img/scan_passed.png)
+
+## Additional Information
+The current [yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/.gitlab-ci.yaml) script contains a sample of a security policy check that fails the scan if the number of allowed security issues exceeds a certain threshold. The sample has `maxIssuesAllowed` set to `200`.

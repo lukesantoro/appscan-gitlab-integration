@@ -1,7 +1,6 @@
 #!/bin/bash
 
 appscanToken=$(curl -k -s -X POST --header 'Content-Type:application/json' --header 'Accept:application/json' -d '{"KeyId":"'"$appscanApiKeyId"'","KeySecret":"'"$appscanApiKeySecret"'"}' "https://$serviceUrl/api/v4/Account/ApiKeyLogin" | grep -oP '(?<="Token":\ ")[^"]*')
-echo "AppScan Token is $appscanToken"
 
 if [ -z "$appscanToken" ]; then
 	echo "The token variable is empty or wrong. Check the API keys.";
@@ -14,11 +13,10 @@ if [ -z "$assetGroupIdExist" ]; then
     exit 1
 fi
 
+encodedAppName=$(replace_spaces "$appscanAppName")
 replace_spaces() {
     echo "$1" | sed 's/ /%20/g'
 }
-
-encodedAppName=$(replace_spaces "$appscanAppName")
 
 appId=$(curl -s -k -X GET --header 'Authorization: Bearer '"$appscanToken"'' --header 'Accept:application/json' "https://$serviceUrl/api/v4/Apps?%24top=5000&%24filter=Name%20eq%20%27$encodedAppName%27&%24select=name%2Cid&%24count=false" | grep -oP '(?<="Id":\ ")[^"]*')
 if [ -z "$appId" ]; then
