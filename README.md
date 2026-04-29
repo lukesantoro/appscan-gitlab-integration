@@ -37,32 +37,35 @@ If you don't have an account, register on [HCL AppScan on Cloud (ASoC)](https://
   | APP_NAME | The name of the application in AppScan |
   | APPSCAN_ASSET | The ID of the asset group in AppScan |
 
-  ![variables](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/ci_cd_variables.png)
+  ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/ci_cd_variables.png)
 
-5. Copy [.gitlab-ci.yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/.gitlab-ci.yaml) and [Dockerfile](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/Dockerfile) into your GitLab repository root.
+5. Copy [sast-scan.yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/sast-scan.yaml) and [Dockerfile](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/Dockerfile) into your GitLab repository root.
 
-6. Build your own runner. Select **Settings > CI/CD >** Runners and follow the steps under **Specific Runners**.
+6. Set CI/CD configuration file.  Set**Settings > CI/CD > General pipelines > CI/DC configuration file**.
+  ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/config_file.png)
 
-7. On the system on which you are setting up the GitLab runner, log in and clone your GitLab repository if one does not already exist. Ensure that a Docker engine is installed on that machine.
+7. Build your own runner. Select **Settings > CI/CD >** Runners and follow the steps under **Specific Runners**.
 
-8. Build a new Docker image called **saclient** from the Dockerfile. Change directory to the root of the repository and run the following command to build the Docker image:
+8. On the system on which you are setting up the GitLab runner, log in and clone your GitLab repository if one does not already exist. Ensure that a Docker engine is installed on that machine.
+
+9. Build a new Docker image called **saclient** from the Dockerfile. Change directory to the root of the repository and run the following command to build the Docker image:
 
   `docker build -t saclient .`
 
    **Important:** The period at the end indicates the current directory.
 
-9. In GitLab, to prevent merges if the scan fails, enable **Pipelines must succeed** at **Settings > Merge requests > Merge checks**.
+10. In GitLab, to prevent merges if the scan fails, enable **Pipelines must succeed** at **Settings > Merge requests > Merge checks**.
 
-10. Verify a new scan job is initiated when new merge requests are created at **Settings > CI/CD > Pipelines**.
+11. Verify a new scan job is initiated when new merge requests are created at **Settings > CI/CD > Pipelines**.
 
   Scan Job
   ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/scan_job.png)
 
-  Artifact downloadable
+  Scan artifacts ready for download
   ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/download_artifacts.png)
 
-  Scan passed based on maxIssuesAllowed
+  Scan job passed based on maxIssuesAllowed
   ![image](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/scan_passed.png)
 
 ## Additional Information
-The current [yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/.gitlab-ci.yaml) script contains a sample of a security policy check that fails the scan if the number of allowed security issues exceeds a certain threshold. The sample has `maxIssuesAllowed` set to `200`.
+The current [yaml](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/sast-scan.yaml) script contains a sample of a security policy check that fails the scan if the number of allowed security issues exceeds a certain threshold. The sample has `maxIssuesAllowed` set to `100`.
