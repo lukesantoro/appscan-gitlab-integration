@@ -17,7 +17,7 @@ If you don't have an account, register on [HCL AppScan on Cloud (ASoC)](https://
 3. Copy the application name.
   - The application name in ASoC maps to `APP_NAME` for this integration.
 
-  ![APP_ID](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/main/img/app_name.png)
+  ![APP_NAME](https://github.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/blob/V2/img/app_name.png)
 
 4. Create variables in GitLab. Select **Settings > CI/CD > Variables**, and set the variables as follows:
 
