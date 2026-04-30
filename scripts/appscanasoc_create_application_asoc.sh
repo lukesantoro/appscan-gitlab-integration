@@ -13,10 +13,10 @@ if [ -z "$assetGroupIdExist" ]; then
     exit 1
 fi
 
-encodedAppName=$(replace_spaces "$appscanAppName")
 replace_spaces() {
     echo "$1" | sed 's/ /%20/g'
 }
+encodedAppName=$(replace_spaces "$appscanAppName")
 
 appId=$(curl -s -k -X GET --header 'Authorization: Bearer '"$appscanToken"'' --header 'Accept:application/json' "https://$serviceUrl/api/v4/Apps?%24top=5000&%24filter=Name%20eq%20%27$encodedAppName%27&%24select=name%2Cid&%24count=false" | grep -oP '(?<="Id":\ ")[^"]*')
 if [ -z "$appId" ]; then
