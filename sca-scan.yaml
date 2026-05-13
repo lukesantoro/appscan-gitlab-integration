@@ -1,10 +1,10 @@
 variables:
   appscanApiKeyId: $APPSCAN_KEY
   appscanApiKeySecret: $APPSCAN_SECRET
-  appscanAppName: $APP_ID
+  appscanAppName: $APP_NAME
   serviceUrl: 'cloud.appscan.com'
   assetGroupId: $APPSCAN_ASSET
-  scanName: $APP_ID-$CI_JOB_ID
+  scanName: $CI_PROJECT_NAME-$CI_JOB_ID
   considerPkgManager: 'yes' #to ignore pkg manager files change to 'no'
   sevSecGw: 'criticalIssues'
   maxIssuesAllowed: 100
