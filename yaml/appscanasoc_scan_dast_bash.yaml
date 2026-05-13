@@ -10,7 +10,7 @@ image: debian:latest
 variables:
   appscanApiKeyId: $APPSCAN_KEY
   appscanApiKeySecret: $APPSCAN_SECRET
-  appscanAppName: $APP_ID
+  appscanAppName: $APP_NAME
   #appscanPresenceId: 00000000-0000-0000-0000-000000000000
   urlTarget: https://demo.testfire.net
   loginDastConfig: login.dast.config
