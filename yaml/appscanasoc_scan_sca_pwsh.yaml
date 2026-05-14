@@ -13,11 +13,11 @@ scan-sca:
     - appscan
   script:
 
-  - Invoke-WebRequest -Uri https://raw.githubusercontent.com/jrocia/Integration-AppScan-onprem-and-Gitlab/main/scripts/appscanasoc_create_application_asoc.ps1 -OutFile appscanasoc_create_application_asoc.ps1
-  - .\appscanasoc_create_application_asoc.ps1
+  - Invoke-WebRequest -Uri https://raw.githubusercontent.com/jrocia/Integration-AppScan-onprem-and-Gitlab/main/scripts/appscan_create_application_asoc.ps1 -OutFile appscan_create_application_asoc.ps1
+  - .\appscan_create_application_asoc.ps1
 
-  - Invoke-WebRequest -Uri https://raw.githubusercontent.com/jrocia/Integration-AppScan-onprem-and-Gitlab/main/scripts/appscanasoc_scan_sca.ps1 -OutFile appscanasoc_scan_sca.ps1
-  - .\appscanasoc_scan_sca.ps1
+  - Invoke-WebRequest -Uri https://raw.githubusercontent.com/jrocia/Integration-AppScan-onprem-and-Gitlab/main/scripts/appscan_scan_sca.ps1 -OutFile appscan_scan_sca.ps1
+  - .\appscan_scan_sca.ps1
 
   artifacts:
     when: always

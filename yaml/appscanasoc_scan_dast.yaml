@@ -22,27 +22,27 @@ scan-job:
   script:
     - apt update > /dev/null && apt install curl jq git -y > /dev/null
 
-    - echo -e "\e[42mSCAN VARIABLE SUMMARY - The scans service url is $serviceUrl. The AppScan application name is $asocAppName and it is part of asset group id number $assetGroupId. The url target is $urlTarget. The scan name will be $CI_PROJECT_NAME-$CI_JOB_ID. The AppScan Presence id is $appscanPresenceId <-(in case it is empty the application must be public). The Security Gate permit less than $maxIssuesAllowed $sevSecGw severity.\e[0m"
+    - echo -e "\e[42mSCAN VARIABLE SUMMARY - The scans service url is $serviceUrl. The AppScan application name is $appscanAppName and it is part of asset group id number $assetGroupId. The url target is $urlTarget. The scan name will be $CI_PROJECT_NAME-$CI_JOB_ID. The AppScan Presence id is $appscanPresenceId <-(in case it is empty the application must be public). The Security Gate permit less than $maxIssuesAllowed $sevSecGw severity.\e[0m"
 
-    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscanasoc_create_application_asoc.sh
-    - chmod +x appscanasoc_create_application_asoc.sh
-    - ./appscanasoc_create_application_asoc.sh
+    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscan_create_application_asoc.sh
+    - chmod +x appscan_create_application_asoc.sh
+    - ./appscan_create_application_asoc.sh
 
-    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscanasoc_dast_scan.sh
-    - chmod +x appscanasoc_dast_scan.sh
-    - ./appscanasoc_dast_scan.sh
+    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscan_dast_scan.sh
+    - chmod +x appscan_dast_scan.sh
+    - ./appscan_dast_scan.sh
 
-    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscanasoc_get_html_report.sh
-    - chmod +x appscanasoc_get_html_report.sh
-    - ./appscanasoc_get_html_report.sh
+    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscan_get_html_report.sh
+    - chmod +x appscan_get_html_report.sh
+    - ./appscan_get_html_report.sh
 
-    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscanasoc_get_xml_report.sh
-    - chmod +x appscanasoc_get_xml_report.sh
-    - ./appscanasoc_get_xml_report.sh
+    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscan_get_xml_report.sh
+    - chmod +x appscan_get_xml_report.sh
+    - ./appscan_get_xml_report.sh
 
-    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscanasoc_check_security_gate.sh
-    - chmod +x appscanasoc_check_security_gate.sh
-    - ./appscanasoc_check_security_gate.sh
+    - curl -k -s -O https://raw.githubusercontent.com/HCL-TECH-SOFTWARE/appscan-gitlab-integration/V2/scripts/appscan_check_security_gate.sh
+    - chmod +x appscan_check_security_gate.sh
+    - ./appscan_check_security_gate.sh
 
   artifacts:
     when: always
